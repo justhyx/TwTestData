@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<twdata>
+  <testdata>
+    <date>2015/12/15</date>
+    <imei>352158042333039</imei>
+    <imei>866949021454138</imei>
+  </testdata>
+
+  <testdata>
+    <date>2015/12/16</date>
+    <imei>352158042333039</imei>
+    <imei>352158043198225</imei>
+  </testdata>
+
+  <testdata>
+    <date>2015/12/17</date>
+    <imei>352158043198225</imei>
+    <imei>352158042167577</imei>
+    <imei>352158042333039</imei>
+  </testdata>
+</twdata>
