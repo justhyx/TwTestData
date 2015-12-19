@@ -52,6 +52,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -63,18 +64,48 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExcelReader.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="ALGORITHM\LocationDataOfFixed.cs" />
+    <Compile Include="ALGORITHM\MeasuredValue.cs" />
+    <Compile Include="ALGORITHM\ObservedValue .cs" />
+    <Compile Include="FORM\ComboList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FORM\ComboList.Designer.cs">
+      <DependentUpon>ComboList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DRIVER\ExcelReader.cs" />
+    <Compile Include="FORM\ComboListItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FORM\ComboListItem.Designer.cs">
+      <DependentUpon>ComboListItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FORM\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="FORM\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="LocationDataRecord.cs" />
+    <Compile Include="ALGORITHM\LocationDataRecord.cs" />
+    <Compile Include="FORM\SampleFORMcs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FORM\SampleFORMcs.Designer.cs">
+      <DependentUpon>SampleFORMcs.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="FORM\ComboList.resx">
+      <DependentUpon>ComboList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FORM\ComboListItem.resx">
+      <DependentUpon>ComboListItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FORM\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FORM\SampleFORMcs.resx">
+      <DependentUpon>SampleFORMcs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -120,6 +151,13 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Component\XPTable - .NET ListView meets Java%27s JTable\SRC\XPTable.csproj">
+      <Project>{1ADD2ECB-2B24-4162-8965-3EFAA9BB041E}</Project>
+      <Name>XPTable</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

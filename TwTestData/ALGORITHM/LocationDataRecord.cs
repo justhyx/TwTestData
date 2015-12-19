@@ -16,7 +16,15 @@ namespace TwTestData
 
         public int ServerID { get; set; }
         public int DataType { get; set; }// 0：GPS 1：LBS AMAP 2：LBS MINIGPS
+
+        /// <summary>
+        /// 纬度 (北正南负)
+        /// </summary>
         public double Latitude { get; set; }
+
+        /// <summary>
+        /// 经度（东正西负）
+        /// </summary>
         public double Longitude { get; set; }
         public DateTime LocationTime { get; set; }
         public string LocationAddress { get; set; }
