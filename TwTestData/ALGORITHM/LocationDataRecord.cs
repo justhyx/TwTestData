@@ -15,7 +15,7 @@ namespace TwTestData
         public int TestId { get; set; }
 
         public int ServerID { get; set; }
-        public int DataType { get; set; }// 0：GPS 1：LBS AMAP 2：LBS MINIGPS
+        public LocationDateSource DataType { get; set; }// 0：GPS 1：LBS AMAP 2：LBS MINIGPS
 
         /// <summary>
         /// 纬度 (北正南负)
@@ -31,10 +31,10 @@ namespace TwTestData
         public string IMEI { get; set; }
 
         private static int testid = 0;
-        public static int TableMark = -1;
+        public static LocationDateSource TableMark = LocationDateSource.GPS;
         public static LocationDataRecord Factory(IExcelDataReader rd)
         {
-            if (TableMark < 0 || TableMark > 2) throw new ArrayTypeMismatchException("Laction Data Type Error");
+            if (Enum.IsDefined(typeof(LocationDateSource), TableMark)) throw new ArrayTypeMismatchException("Laction Data Type Error");
 
             var record = new LocationDataRecord();
 
@@ -49,5 +49,10 @@ namespace TwTestData
             return record;
         }
 
+    }
+
+    public enum LocationDateSource
+    {
+        GPS = 0, AMAP = 1, MINIGPS = 2
     }
 }

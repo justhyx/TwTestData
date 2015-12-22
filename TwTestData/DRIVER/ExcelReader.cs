@@ -20,7 +20,7 @@ namespace TwTestData
         /// <param name="filetype">文件类型，目前只支持 xls 和 xlsx</param>
         /// <param name="datatype">定位数据是 GPS 、Amap LBS 、miniGPS LBS</param>
         /// <returns>回传一组定位数据</returns>
-        public static List<LocationDataRecord> Read(string filePath, int filetype, int datatype)
+        public static List<LocationDataRecord> Read(string filePath, int filetype, LocationDateSource datatype)
         {
             FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
             IExcelDataReader excelReader;
@@ -57,7 +57,7 @@ namespace TwTestData
 
             //6. Free resources (IExcelDataReader is IDisposable)
             excelReader.Close();
-            LocationDataRecord.TableMark = -1;
+            LocationDataRecord.TableMark = LocationDateSource.GPS;
             return Records;
         }
     }
