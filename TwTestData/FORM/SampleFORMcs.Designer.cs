@@ -106,7 +106,7 @@ namespace TwTestData.FORM
             this.filesTable.ColumnModel = this.fileColumn;
             this.filesTable.Location = new System.Drawing.Point(12, 58);
             this.filesTable.Name = "filesTable";
-            this.filesTable.Size = new System.Drawing.Size(284, 541);
+            this.filesTable.Size = new System.Drawing.Size(524, 541);
             this.filesTable.TabIndex = 0;
             this.filesTable.TableModel = this.filedata;
             this.filesTable.Text = "table2";
@@ -123,10 +123,10 @@ namespace TwTestData.FORM
             this.tabControl1.Controls.Add(this.mespage);
             this.tabControl1.Controls.Add(this.Anapage);
             this.tabControl1.Font = new System.Drawing.Font("微软雅黑 Light", 12F);
-            this.tabControl1.Location = new System.Drawing.Point(302, 58);
+            this.tabControl1.Location = new System.Drawing.Point(542, 58);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(557, 541);
+            this.tabControl1.Size = new System.Drawing.Size(317, 541);
             this.tabControl1.TabIndex = 0;
             // 
             // obvpage
@@ -135,7 +135,7 @@ namespace TwTestData.FORM
             this.obvpage.Location = new System.Drawing.Point(4, 30);
             this.obvpage.Name = "obvpage";
             this.obvpage.Padding = new System.Windows.Forms.Padding(3);
-            this.obvpage.Size = new System.Drawing.Size(549, 507);
+            this.obvpage.Size = new System.Drawing.Size(309, 507);
             this.obvpage.TabIndex = 0;
             this.obvpage.Text = "观察数据";
             this.obvpage.UseVisualStyleBackColor = true;
@@ -146,7 +146,7 @@ namespace TwTestData.FORM
             this.tableObv.HeaderFont = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tableObv.Location = new System.Drawing.Point(3, 3);
             this.tableObv.Name = "tableObv";
-            this.tableObv.Size = new System.Drawing.Size(543, 501);
+            this.tableObv.Size = new System.Drawing.Size(303, 501);
             this.tableObv.TabIndex = 0;
             this.tableObv.Text = "table1";
             // 
@@ -156,7 +156,7 @@ namespace TwTestData.FORM
             this.mespage.Location = new System.Drawing.Point(4, 30);
             this.mespage.Name = "mespage";
             this.mespage.Padding = new System.Windows.Forms.Padding(3);
-            this.mespage.Size = new System.Drawing.Size(549, 507);
+            this.mespage.Size = new System.Drawing.Size(309, 507);
             this.mespage.TabIndex = 1;
             this.mespage.Text = "后台数据";
             this.mespage.UseVisualStyleBackColor = true;
@@ -167,7 +167,7 @@ namespace TwTestData.FORM
             this.tableData.HeaderFont = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tableData.Location = new System.Drawing.Point(3, 3);
             this.tableData.Name = "tableData";
-            this.tableData.Size = new System.Drawing.Size(543, 501);
+            this.tableData.Size = new System.Drawing.Size(303, 501);
             this.tableData.TabIndex = 0;
             this.tableData.Text = "table3";
             // 
@@ -177,7 +177,7 @@ namespace TwTestData.FORM
             this.Anapage.Location = new System.Drawing.Point(4, 30);
             this.Anapage.Name = "Anapage";
             this.Anapage.Padding = new System.Windows.Forms.Padding(3);
-            this.Anapage.Size = new System.Drawing.Size(549, 507);
+            this.Anapage.Size = new System.Drawing.Size(309, 507);
             this.Anapage.TabIndex = 2;
             this.Anapage.Text = "分析结果";
             this.Anapage.UseVisualStyleBackColor = true;
@@ -188,7 +188,7 @@ namespace TwTestData.FORM
             this.tableResult.HeaderFont = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.tableResult.Location = new System.Drawing.Point(3, 3);
             this.tableResult.Name = "tableResult";
-            this.tableResult.Size = new System.Drawing.Size(543, 501);
+            this.tableResult.Size = new System.Drawing.Size(303, 501);
             this.tableResult.TabIndex = 0;
             this.tableResult.Text = "table4";
             // 

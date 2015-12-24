@@ -11,6 +11,7 @@ using XPTable.Models;
 using XPTable.Editors;
 using TwTestData.ALGORITHM;
 using System.Diagnostics;
+using System.IO;
 
 namespace TwTestData.FORM
 {
@@ -64,7 +65,7 @@ namespace TwTestData.FORM
             TextColumn txtFilePathColumn = new TextColumn()
             {
                 Text = "文件地址",
-                Width = 500,
+                Width = 350,
                 Editable = false,
                 Selectable = false
             };
@@ -76,12 +77,12 @@ namespace TwTestData.FORM
                 LocationDateSource.MINIGPS
     });
             editor.SelectedIndex = 0;
-           // editor.SelectedIndexChanged += new EventHandler(combolist_ChangeData);
+            // editor.SelectedIndexChanged += new EventHandler(combolist_ChangeData);
 
             ComboBoxColumn cbbDataTypeColumn = new ComboBoxColumn()
             {
                 Text = "数据类型",
-                Width = 200,
+                Width = 80,
                 Editor = editor
             };
             //ProgressBarColumn progressBarLoadColumn = new ProgressBarColumn();
@@ -104,10 +105,31 @@ namespace TwTestData.FORM
             //progressBarLoadColumn});
 
 
-            this.tableObv.ColumnModel = new ColumnModel();
+            this.tableObv.ColumnModel = new ColumnModel(new Column[]
+            {
+                new TextColumn("Begin") { Editable = false, Selectable = false, Sortable = false },
+                new TextColumn("End") { Editable = false, Selectable = false, Sortable = false },
+                new TextColumn("latitude") { Editable = false, Selectable = false, Sortable = false },
+                new TextColumn("longitude") { Editable = false, Selectable = false, Sortable = false },
+                new TextColumn("address") { Editable = false, Selectable = false, Sortable = false },
+                new TextColumn("imei") { Editable = false, Selectable = false, Sortable = false },
+            });
             this.tableObv.TableModel = new TableModel();
 
-            this.tableData.ColumnModel = new ColumnModel();
+
+            this.tableData.ColumnModel = new ColumnModel(new Column[] {
+            new TextColumn("index") { Editable = false, Selectable = false, Sortable = false },
+          new TextColumn("id") { Editable = false, Selectable = false, Sortable = false },
+          new TextColumn("IMEI") { Editable = false, Selectable = false, Sortable = true },
+           new TextColumn("timemark") { Editable = false, Selectable = false, Sortable = true },
+             new TextColumn("latitude") { Editable = false, Selectable = false, Sortable = false },
+            new TextColumn("longitude") { Editable = false, Selectable = false, Sortable = false },
+            new TextColumn("address") { Editable = false, Selectable = false, Sortable = false },
+            new TextColumn("type") { Editable = false, Selectable = false, Sortable = false },
+              new TextColumn("filesource") { Editable = false, Selectable = false, Sortable = false }
+        });
+
+
             this.tableData.TableModel = new TableModel();
 
             this.tableResult.ColumnModel = new ColumnModel();
@@ -155,10 +177,8 @@ namespace TwTestData.FORM
                         Debug.WriteLine(ex.Message);
                     }
                 }
-
                 FillfilesTable();
             }
-
         }
 
         //刷新截取类
@@ -183,21 +203,131 @@ namespace TwTestData.FORM
             var dialog = new OpenFileDialog()
             {
                 InitialDirectory = Application.StartupPath,
-                Filter = "Excel 97-2003|*.xls|Excel2007-2015|*.xlsx|分隔的数据格式|*.cvs|普通数据|*.*",
+                Filter = "Excel2007-2015|*.xlsx|Excel 97-2003|*.xls",
                 Title = "加载观察文件",
-                DefaultExt = "Excel2007-2015|*.xlsx"
-
+                DefaultExt = "Excel2007-2015|*.xlsx",
+                Multiselect = false,
+                CheckFileExists = true,
             };
-        }
 
+            if (DialogResult.OK == dialog.ShowDialog())
+            {
+                var f = dialog.FileName;
+                obvdata.Clear();
+                switch (Path.GetExtension(f).ToLower())
+                {
+                    case ".xls":
+                        obvdata.AddRange(FileReader.ReadXLS(f));
+                        break;
+                    case ".xlsx":
+                        obvdata.AddRange(FileReader.ReadXLSX(f));
+                        break;
+                    default:
+                        Debug.WriteLine("UnknowFileType");
+                        break;
+                }
+
+                fillObvTable();
+                tabControl1.SelectedIndex = 0;
+            }
+        }
+        private void fillObvTable()
+        {
+            var rows = new Row[obvdata.Count];
+            int i = 0;
+            foreach (var obv in obvdata)
+            {
+                rows[i++] = new Row(new string[] {
+                    obv.Begin.ToString(),
+                    obv.End.ToString(),
+                    obv.Latitude.ToString(),
+                    obv.Longitude.ToString(),
+                    obv.Address,
+                    obv.TestIMEIGroup.Aggregate((s1,s2)=>(s1 +" "+s2))
+                });
+            }
+            tableObv.BeginUpdate();
+            tableObv.TableModel.Rows.Clear();
+            tableObv.TableModel.Rows.AddRange(rows);
+            tableObv.TableModel.RowHeight = 20;
+            tableObv.EndUpdate();
+        }
         private void btnLocationData_Click(object sender, EventArgs e)
         {
+            mesdata.Clear();
+            foreach (var kp in filepaths)
+            {
+                if (File.Exists(kp.Key))
+                {
+                    var name = Path.GetFileNameWithoutExtension(kp.Key);
+                    try
+                    {
+                        switch (Path.GetExtension(kp.Key).ToLower())
+                        {
+                            case ".xls":
+                                mesdata.Add(name, FileReader.ReadXLS(kp.Key, kp.Value));
+                                break;
+                            case ".xlsx":
+                                mesdata.Add(name, FileReader.ReadXLSX(kp.Key, kp.Value));
+                                break;
+                            case ".xml":
+                                mesdata.Add(name, FileReader.ReadXML(kp.Key, kp.Value));
+                                break;
+                            case ".cvs":
+                                break;
+                            default:
+                                break;
+                        }
+                        Debug.WriteLine("Data Loaded", kp.Key);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message);
+                    }
+                }
+            }
+            FillDataTable();
+            tabControl1.SelectedIndex = 1;
+        }
 
+        private void FillDataTable()
+        {
+            this.tableData.BeginUpdate();
+            List<Row> lr = new List<Row>();
+            var j = 0; var i = 0;
+
+            foreach (var filedata in mesdata)
+            {
+                i++;
+                foreach (var rd in filedata.Value)
+                {
+                    lr.Add(new Row(new string[] {
+                        rd.TestId.ToString(),
+                        rd.ServerID.ToString(),
+                        rd.IMEI,
+                        rd.LocationTime.ToString(),
+                        rd.Latitude.ToString(),
+                        rd.Longitude.ToString(),
+                        rd.LocationAddress,
+                        rd.DataType.ToString(),
+                        filedata.Key
+                    }));
+                    j++;
+                }
+
+            }
+
+            this.tableData.TableModel.Rows.Clear();
+            this.tableData.TableModel.Rows.AddRange(lr.ToArray());
+            this.tableData.TableModel.RowHeight = 24;
+            this.tableData.EndUpdate();
+            MessageBox.Show(string.Format("Done Add {0} Files， TOtal {1} ROWs Data", i, j));
         }
 
         private void BtnAnalayis_Click(object sender, EventArgs e)
         {
 
+            tabControl1.SelectedIndex = 2;
         }
 
         private void btnExport_Click(object sender, EventArgs e)
@@ -227,8 +357,8 @@ namespace TwTestData.FORM
 
             ///
             string file = (string)filesTable.TableModel.Rows[filesTable_row].Tag;
-            if (DialogResult.Yes == MessageBox.Show("移除操作",
-                "Do you want to remove the file /n [" + file + "] /n from the list?",
+            if (DialogResult.Yes == MessageBox.Show("Do you want to remove the file /n [" + file + "] /n from the list?",
+                "移除操作",
                  MessageBoxButtons.YesNo))
             {
                 filepaths.Remove(file);
@@ -236,7 +366,7 @@ namespace TwTestData.FORM
             }
         }
 
-     
+
 
         private void filesTable_CellPropertyChanged(object sender, XPTable.Events.CellEventArgs e)
         {
@@ -252,8 +382,6 @@ namespace TwTestData.FORM
         /// 控件的SB的局限性 ，
         /// 只能通过CellEnter的方式确认当前被点击的对象坐标 
         private int filesTable_row, filesTable_col;
-
-
 
         private void filesTable_CellMouseEnter(object sender, XPTable.Events.CellMouseEventArgs e)
         {

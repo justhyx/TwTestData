@@ -31,5 +31,8 @@ namespace TwTestData.ALGORITHM
         /// </summary>
         public double Longitude { get; set; }
 
+        public string Address { get; set; }
+
+        public string[] TestIMEIGroup { get; set; }
     }
 }
