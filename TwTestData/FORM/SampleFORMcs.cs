@@ -321,11 +321,39 @@ namespace TwTestData.FORM
             this.tableData.TableModel.Rows.AddRange(lr.ToArray());
             this.tableData.TableModel.RowHeight = 24;
             this.tableData.EndUpdate();
-            MessageBox.Show(string.Format("Done Add {0} Files， TOtal {1} ROWs Data", i, j));
+            MessageBox.Show(string.Format("Done Add {0} Files， Total {1} ROWs Data", i, j));
         }
 
         private void BtnAnalayis_Click(object sender, EventArgs e)
         {
+            //分析对象
+            // 1. 分组分析 
+            //按观察数据对当前定位数据分组。定位类型-》 时间序列 -》
+            // 对每组的定位数据做归一化处理，然后先对当前GPS定位 进行准确度分析
+            // 比照GPS定位记录，对两种LBS定位进行比照式计算。
+            // 比照GPS平均值 看看 GPS误差之间是否存在方向性偏差。
+            // 2. 总比照对象列表
+            // 对全部定位记录的偏差 归一化，确认总偏差度。
+            //
+
+            /*
+            观察组数
+            测试设备数
+            GPS测量点数：{}、Gaode测量点数：{}、MiniGPS测量点数：{}、
+            GPS 平均误差：{}、Gaode 平均误差：、MiniGPS 平均误差：
+            GPS 归一化标准差：{}、GPS 归一化标准差：{}、GPS 归一化标准差：{}、
+            */
+
+            /*
+            组号：{index}
+            测定时间：开始：{Obv.Begin}，结束：{Obv.End}
+            参与测试设备：{Obv.IMEI}
+            观察位置点：{Obv.Latitude}：{Obv.Lontitude}
+            GPS测量点数：{}、Gaode测量点数：{}、MiniGPS测量点数：{}、
+            GPS 平均误差：{}、Gaode 平均误差：、MiniGPS 平均误差：
+            GPS 归一化标准差：{}、GPS 归一化标准差：{}、GPS 归一化标准差：{}
+            */
+
 
             tabControl1.SelectedIndex = 2;
         }
