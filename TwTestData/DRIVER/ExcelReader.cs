@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Excel;
+
 using System.Data.Entity;
 using System.IO;
 using System.Data;
@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Xml;
 using System.Xml.Linq;
 using TwTestData.ALGORITHM;
+using Excel;
 
 namespace TwTestData
 {
@@ -85,34 +86,7 @@ namespace TwTestData
             }
         }
 
-        public static List<LocationDataRecord> ReadXML(string filePath, LocationDateSource datatype)
-        {
-            FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
-            XDocument xdoc = XDocument.Load(stream);
-
-
-            using (stream)
-            {
-                try
-                {
-                    foreach (var row in xdoc.Root.Elements())
-                    {
-
-                    }
-                    return new List<LocationDataRecord>();
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-                finally
-                {
-                    stream.Close();
-                }
-            }
-
-
-        }
+  
 
         internal static List<ObservedValueOfFixed> ReadXLS(string f)
         {
@@ -196,9 +170,8 @@ namespace TwTestData
                 }
             }
             catch (Exception ex)
-            {                
+            {
                 Debug.WriteLine(ex.Message);
-
             }
 
             return Records;

@@ -12,6 +12,7 @@ using XPTable.Editors;
 using TwTestData.ALGORITHM;
 using System.Diagnostics;
 using System.IO;
+using TwTestData.DRIVER;
 
 namespace TwTestData.FORM
 {
@@ -53,6 +54,8 @@ namespace TwTestData.FORM
             InitializeComponent();
             InitTable();
         }
+
+     
 
         public void InitTable()
         {
@@ -107,36 +110,67 @@ namespace TwTestData.FORM
 
             this.tableObv.ColumnModel = new ColumnModel(new Column[]
             {
-                new TextColumn("Begin") { Editable = false, Selectable = false, Sortable = false },
-                new TextColumn("End") { Editable = false, Selectable = false, Sortable = false },
-                new TextColumn("latitude") { Editable = false, Selectable = false, Sortable = false },
-                new TextColumn("longitude") { Editable = false, Selectable = false, Sortable = false },
-                new TextColumn("address") { Editable = false, Selectable = false, Sortable = false },
-                new TextColumn("imei") { Editable = false, Selectable = false, Sortable = false },
+                    NewTxtColumn("Begin"),
+                    NewTxtColumn("End"),
+                    NewTxtColumn("latitude"),
+                    NewTxtColumn("longitude"),
+                    NewTxtColumn("address"),
+                    NewTxtColumn("imei"),
             });
             this.tableObv.TableModel = new TableModel();
 
 
             this.tableData.ColumnModel = new ColumnModel(new Column[] {
-            new TextColumn("index") { Editable = false, Selectable = false, Sortable = false },
-          new TextColumn("id") { Editable = false, Selectable = false, Sortable = false },
-          new TextColumn("IMEI") { Editable = false, Selectable = false, Sortable = true },
-           new TextColumn("timemark") { Editable = false, Selectable = false, Sortable = true },
-             new TextColumn("latitude") { Editable = false, Selectable = false, Sortable = false },
-            new TextColumn("longitude") { Editable = false, Selectable = false, Sortable = false },
-            new TextColumn("address") { Editable = false, Selectable = false, Sortable = false },
-            new TextColumn("type") { Editable = false, Selectable = false, Sortable = false },
-              new TextColumn("filesource") { Editable = false, Selectable = false, Sortable = false }
+                   NewTxtColumn("index"),
+                   NewTxtColumn("id"),
+                   NewTxtColumn("IMEI"),
+                   NewTxtColumn("timemark"),
+                   NewTxtColumn("latitude"),
+                   NewTxtColumn("longitude"),
+                   NewTxtColumn("address"),
+                   NewTxtColumn("type"),
+                   NewTxtColumn("filesource"),
         });
 
 
             this.tableData.TableModel = new TableModel();
 
-            this.tableResult.ColumnModel = new ColumnModel();
+            this.tableResult.ColumnModel = new ColumnModel(new Column[] {
+                new TextColumn(), new NumberColumn(),
+                new TextColumn(), new NumberColumn(),
+                new TextColumn(), new NumberColumn(),
+                new TextColumn(), new NumberColumn(),
+                 new TextColumn(), new NumberColumn(),});
+
             this.tableResult.TableModel = new TableModel();
 
         }
 
+        private static TextColumn NewTxtColumn(string colname)
+        {
+            return new TextColumn(colname) { Editable = false, Selectable = false, Sortable = false };
+        }
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            var saveDialog = new SaveFileDialog()
+            {
+                Title = "ResultSave",
+                InitialDirectory = Application.StartupPath,
+                Filter = "*.*|*.txt",
+                DefaultExt = "*.txt",
+                AddExtension = true,
+                ValidateNames = true,
+            };
+
+            if (DialogResult.OK == saveDialog.ShowDialog())
+            {
+                if (TxtHelper.Save(saveDialog.FileName, resultReport, UTF8Encoding.UTF8))
+                {
+                    MessageBox.Show("Success Save Result Report!");
+                }
+            }
+        }
 
         /// <summary>
         /// 加载观察文件，只考察文件的存在，不考察有效性
@@ -270,12 +304,13 @@ namespace TwTestData.FORM
                             case ".xlsx":
                                 mesdata.Add(name, FileReader.ReadXLSX(kp.Key, kp.Value));
                                 break;
-                            case ".xml":
-                                mesdata.Add(name, FileReader.ReadXML(kp.Key, kp.Value));
-                                break;
-                            case ".cvs":
-                                break;
+                            //case ".xml":
+                            //    mesdata.Add(name, FileReader.ReadXML(kp.Key, kp.Value));
+                            //    break;
+                            //case ".cvs":
+                            //    break;
                             default:
+                                MessageBox.Show("Unknow File TYPE!");
                                 break;
                         }
                         Debug.WriteLine("Data Loaded", kp.Key);
@@ -326,6 +361,15 @@ namespace TwTestData.FORM
 
         private void BtnAnalayis_Click(object sender, EventArgs e)
         {
+            var rows = new List<Row>();
+
+            var locadata = new List<LocationDataRecord>();
+
+            foreach (var vv in mesdata.Values)
+            {
+                locadata.AddRange(vv);
+            }
+
             //分析对象
             // 1. 分组分析 
             //按观察数据对当前定位数据分组。定位类型-》 时间序列 -》
@@ -336,13 +380,21 @@ namespace TwTestData.FORM
             // 对全部定位记录的偏差 归一化，确认总偏差度。
             //
 
+            var Ct = new CellStyle() { Font = new Font("微软雅黑 Light", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134))) };
             /*
-            观察组数
+            观察组数{}
             测试设备数
             GPS测量点数：{}、Gaode测量点数：{}、MiniGPS测量点数：{}、
-            GPS 平均误差：{}、Gaode 平均误差：、MiniGPS 平均误差：
-            GPS 归一化标准差：{}、GPS 归一化标准差：{}、GPS 归一化标准差：{}、
+
             */
+            rows.Add(new Row(new Cell[] {
+                new Cell("观察组数："), new Cell(obvdata.Count, Ct) }));
+            rows.Add(new Row(new Cell[] {
+                new Cell("测试设备数："), new Cell(FixedAlgorithm.DistinctIMEI(obvdata).Count()   ) }));
+            rows.Add(new Row(new Cell[] {
+                new Cell("GPS测量点数："),new Cell(locadata.Count(s => s.DataType == LocationDateSource.GPS)),
+                new Cell("Gaode 测量点数："),new Cell(locadata.Count(s => s.DataType == LocationDateSource.AMAP)),
+                new Cell("MiniGPS 测量点数："),new Cell(locadata.Count(s => s.DataType == LocationDateSource.MINIGPS)), }));
 
             /*
             组号：{index}
@@ -353,14 +405,100 @@ namespace TwTestData.FORM
             GPS 平均误差：{}、Gaode 平均误差：、MiniGPS 平均误差：
             GPS 归一化标准差：{}、GPS 归一化标准差：{}、GPS 归一化标准差：{}
             */
+            var i = 0;
+            double sampleLatitude, sampleLongitude;
+            foreach (var obv in obvdata)
+            {
 
+                var sample = from loca in locadata
+                             where (loca.LocationTime >= obv.Begin && loca.LocationTime <= obv.End)
+                             select loca;
+
+                //locadata. (s => s.LocationTime > obv.Begin && s.LocationTime < obv.End);
+
+                rows.Add(new Row(new Cell[] { new Cell("组号："), new Cell(++i), }));
+
+                rows.Add(new Row(new Cell[] {
+                    new Cell(" 测定开始时间："+ obv.Begin.ToString("yyyy/MM/dd  hh:mm")), new Cell(),
+                    new Cell(" 测定结束时间："+ obv.End.ToString("yyyy/MM/dd  hh:mm")), }));
+                rows.Add(new Row(new Cell[] {
+                    new Cell("GPS测量点数："),new Cell(FixedAlgorithm.Count(sample,LocationDateSource.GPS)),
+                    new Cell("Gaode 测量点数："),new Cell(FixedAlgorithm.Count(sample,LocationDateSource.AMAP)),
+                    new Cell("MiniGPS 测量点数："),new Cell(FixedAlgorithm.Count(sample,LocationDateSource.MINIGPS)), }));
+
+                /*
+        GPS 平均误差：{ }、Gaode 平均误差：、MiniGPS 平均误差：
+        GPS归一化标准差：{ }、GPS 归一化标准差：{ }、GPS 归一化标准差：{ }、            
+        */
+
+                sampleLatitude = FixedAlgorithm.AvgLatitude(sample, LocationDateSource.GPS, obv);
+                sampleLongitude = FixedAlgorithm.AvgLongitude(sample, LocationDateSource.GPS, obv);
+                rows.Add(new Row(new Cell[] {
+                new Cell("GPS 纬度平均数："),new Cell(sampleLatitude),
+                new Cell("GPS 经度平均数："),new Cell(sampleLongitude),
+                new Cell("GPS 标准差："), new Cell(FixedAlgorithm.Variance(sample,LocationDateSource.GPS,obv.Latitude,obv.Longitude)),}));
+
+                rows.Add(new Row(new Cell[] {
+                new Cell("Gaode 纬度平均数："),new Cell(FixedAlgorithm.AvgLatitude(sample,LocationDateSource.AMAP,obv)),
+                new Cell("Gaode 经度平均数："),new Cell(FixedAlgorithm.AvgLongitude(sample,LocationDateSource.AMAP,obv)),
+                new Cell("Gaode 标准差："), new Cell(FixedAlgorithm.Variance(sample,LocationDateSource.AMAP,obv.Latitude,obv.Longitude)),}));
+
+                rows.Add(new Row(new Cell[] {
+                new Cell("MiniGPS 纬度平均数："),new Cell(FixedAlgorithm.AvgLatitude(sample,LocationDateSource.MINIGPS,obv)),
+                new Cell("MiniGPS 经度平均数："),new Cell(FixedAlgorithm.AvgLongitude(sample,LocationDateSource.MINIGPS,obv)),
+                new Cell("MiniGPS 标准差："), new Cell(FixedAlgorithm.Variance(sample,LocationDateSource.MINIGPS,obv.Latitude,obv.Longitude)),}));
+            }
+
+
+            //rows.Add(new Row(new Cell[] {
+            //    new Cell("GPS 纬度平均误差："),   new Cell(),
+            //    new Cell("GPS 纬度平均误差："),   new Cell("GPS 纬度平均误差："),
+            //    new Cell("GPS 归一化标准差："), new Cell(),}));
+
+            //rows.Add(new Row(new Cell[] {
+            //    new Cell("Gaode 纬度平均误差："), new Cell("Gaode 纬度平均误差："),
+            //    new Cell("Gaode 纬度平均误差："), new Cell("Gaode 纬度平均误差："),
+            //    new Cell("Gaode 归一化标准差："), new Cell(obvdata.Count),}));
+            //rows.Add(new Row(new Cell[] {
+            //    new Cell("MiniGPS 纬度平均误差："),   new Cell("MiniGPS 纬度平均误差："),
+            //    new Cell("MiniGPS 纬度平均误差："),   new Cell("MiniGPS 纬度平均误差："),
+            // new Cell("MiniGPS 归一化标准差："), new Cell(obvdata.Count),}));
+
+            resultReport.Clear();
+
+            foreach (var r in rows)
+            {
+                resultReport.Append("[");
+                foreach (Cell c in r.Cells)
+                {
+                    if (c != null)
+                    {
+                        if (c.Data != null)
+                        {
+                            resultReport.Append(c.Data.ToString() + ",");
+                            Debug.Write("[" + c.Data.ToString() + "]");
+                        }
+                        else
+                        {
+                            if (c.Text != null)
+                            {
+                                resultReport.Append(c.Text.ToString() + ",");
+                                Debug.Write("[" + c.Text.ToString() + "]");
+                            }
+                        }
+                    }
+                }
+                resultReport.AppendLine("]");
+                Debug.WriteLine("");
+            }
+
+            tableResult.BeginUpdate();
+            tableResult.TableModel.Rows.Clear();
+            tableResult.TableModel.Rows.AddRange(rows.ToArray());
+            tableResult.TableModel.RowHeight = 20;
+            tableResult.EndUpdate();
 
             tabControl1.SelectedIndex = 2;
-        }
-
-        private void btnExport_Click(object sender, EventArgs e)
-        {
-
         }
 
 
@@ -378,6 +516,12 @@ namespace TwTestData.FORM
         /// 观察数据
         /// </summary>
         private List<ObservedValueOfFixed> obvdata = new List<ObservedValueOfFixed>();
+
+
+        /// <summary>
+        /// 分析报告
+        /// </summary>
+        private StringBuilder resultReport = new StringBuilder();
 
         private void filesTable_CellButtonClicked(object sender, XPTable.Events.CellButtonEventArgs e)
         {
